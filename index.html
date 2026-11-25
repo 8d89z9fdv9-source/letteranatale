@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="it" class="lock">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#17302A">
+<title>Per te</title>
+<meta property="og:title" content="Per te">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700&family=La+Belle+Aurore&display=swap" rel="stylesheet">
+<!-- solo la I maiuscola da un altro font: quella di La Belle Aurore sembra una J -->
+<link href="https://fonts.googleapis.com/css2?family=Over+the+Rainbow&text=I&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Verde abete */
+  --bg:#17302A; --glow:#24463C;
+  --text:#F3EEE4; --text-soft:#A9C2B6;
+  --ink:#1B1B1D; --ink-soft:#55555A; --pen-a:#D3312A;
+  --paper:#F6F1E7;
+  --env-in:#1F3F35; --env-side:#2B5446; --env-bottom:#2B5446; --flap:#2B5446; --flap-in:#264B3F; --env-shadow:rgba(0,0,0,.45);
+  --env-ink:#F3EEE4; --env-line:rgba(0,0,0,.35);
+  --field:#21403A; --field-line:#335A4E;
+  --shadow:rgba(0,0,0,.5);
+  --snow:255,255,255;
+  --lh:40px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+html{background:var(--bg); -webkit-text-size-adjust:100%}
+body{min-height:100vh; min-height:100dvh; color:var(--text); font-family:Figtree, system-ui, sans-serif}
+body::before{content:""; position:fixed; inset:0; z-index:-1; background:radial-gradient(110% 70% at 50% 40%, var(--glow), var(--bg) 70%)}
+html.lock, html.lock body{overflow:hidden; overscroll-behavior:none}
+[hidden]{display:none !important}
+button{font:inherit; -webkit-tap-highlight-color:transparent}
+.hand{font-family:'Over the Rainbow', 'La Belle Aurore', 'Snell Roundhand', cursive}
+
+/* foglio */
+.sheet{position:relative; display:block; width:100%; max-width:560px; margin:0 auto; padding:30px 24px 44px;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(180deg, transparent calc(33.3% - 1px), rgba(70,50,30,.07) calc(33.3% - 1px), rgba(255,255,255,.8) calc(33.3% + 1px), transparent calc(33.3% + 2px), transparent calc(66.6% - 1px), rgba(70,50,30,.07) calc(66.6% - 1px), rgba(255,255,255,.8) calc(66.6% + 1px), transparent calc(66.6% + 2px)),
+    linear-gradient(165deg, rgba(255,255,255,.6), rgba(255,255,255,0) 40%, rgba(120,90,60,.04));
+  border-radius:3px; color:var(--ink)}
+.sheet p{margin:0}
+.sheet .date{text-align:right; font-size:20px; line-height:var(--lh); color:var(--ink-soft)}
+.sheet .text{font-size:24px; line-height:var(--lh); white-space:pre-wrap; overflow-wrap:anywhere}
+.sheet .w{display:inline-block; max-width:100%}
+.sheet .sep{position:relative; height:calc(var(--lh) * 1.5)}
+.sheet .sep::after{content:""; position:absolute; left:32%; right:32%; top:50%; border-top:1.5px solid var(--ink); opacity:.3; border-radius:2px; transform:rotate(-1.2deg)}
+.sheet .date.diary{margin-bottom:calc(var(--lh) * .25)}
+.sheet .sign{margin-top:calc(var(--lh) * .6); padding-right:10px; text-align:right; font-size:28px; line-height:var(--lh); transform:rotate(-2deg); transform-origin:100% 50%}
+
+/* busta */
+#stage{position:fixed; inset:0; z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:calc(16px + 14vh) 16px 16px; cursor:pointer; -webkit-touch-callout:none; touch-action:manipulation}
+.env-wrap{width:min(84vw, 380px); animation:arrive .7s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes arrive{from{opacity:0; transform:translateY(26px)}}
+.float{animation:float 5.5s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-7px)}}
+.env{position:relative; width:100%; aspect-ratio:3/2; outline:none; -webkit-tap-highlight-color:transparent; -webkit-user-select:none; user-select:none; filter:drop-shadow(0 8px 14px var(--env-shadow))}
+.env:focus-visible{outline:2px solid var(--pen-a); outline-offset:10px; border-radius:6px}
+.env-back{position:absolute; inset:0; background:var(--env-in); border-radius:5px}
+.letter{position:absolute; left:5%; right:5%; top:5%; height:88%; z-index:2; overflow:hidden; border-radius:3px; background:var(--paper); box-shadow:0 1px 3px rgba(0,0,0,.12); transition:transform .85s cubic-bezier(.3,.75,.25,1)}
+.letter .sheet{position:absolute; left:0; top:0; margin:0; max-width:none; border-radius:0; transform-origin:0 0}
+.front{position:absolute; inset:0; z-index:3; background:var(--env-side); -webkit-clip-path:polygon(0 0, 50% 54%, 100% 0, 100% 100%, 0 100%); clip-path:polygon(0 0, 50% 54%, 100% 0, 100% 100%, 0 100%)}
+.front::after{content:""; position:absolute; inset:0; background:var(--env-bottom); -webkit-clip-path:polygon(0 100%, 50% 47%, 100% 100%); clip-path:polygon(0 100%, 50% 47%, 100% 100%)}
+.to{position:absolute; left:8%; right:8%; bottom:7%; z-index:4; text-align:center; font-size:clamp(26px, 8vw, 34px); color:var(--env-ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transform:rotate(-2deg)}
+.flap-box{position:absolute; left:0; top:0; width:100%; height:60%; z-index:5; perspective:1100px; filter:drop-shadow(0 1px 0 var(--env-line)); transition:z-index 0s .4s}
+.flap{position:absolute; inset:0; transform-origin:50% 0; background-color:var(--flap); -webkit-clip-path:polygon(0 0, 100% 0, 50% 100%); clip-path:polygon(0 0, 100% 0, 50% 100%); transition:transform .76s cubic-bezier(.55,.05,.45,.95), background-color 0s .4s}
+.hint{margin:30px 0 0; font-size:15px; font-weight:500; color:var(--text-soft); transition:opacity .3s}
+#stage.opening .hint{opacity:0}
+#stage.open .flap-box{z-index:1}
+#stage.open .flap{transform:rotateX(180deg); background-color:var(--flap-in)}
+#stage.out .letter{transform:translateY(-46%)}
+#stage.away .env-wrap{transform:translateY(45vh); opacity:0; transition:transform .8s cubic-bezier(.5,0,.75,0), opacity .55s .2s}
+#stage.instant *{transition:none !important}
+
+/* lettura */
+#reader{position:relative; z-index:11; padding:calc(22px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom))}
+.preview #reader{padding-top:calc(72px + env(safe-area-inset-top))}
+.sheet-wrap{filter:drop-shadow(0 14px 22px var(--shadow))}
+.again{display:block; margin:26px auto 0; padding:10px 18px; background:none; border:0; font-size:15px; font-weight:600; color:var(--text-soft); cursor:pointer; opacity:0; transition:opacity .5s .3s}
+.reading .again{opacity:1}
+.back{position:fixed; top:calc(12px + env(safe-area-inset-top)); left:12px; z-index:30; padding:9px 15px; border-radius:999px; border:1px solid var(--field-line); background:var(--field); color:var(--text); font-weight:600; font-size:15px; box-shadow:0 2px 10px rgba(0,0,0,.08); cursor:pointer}
+.broken{position:fixed; inset:0; display:grid; place-items:center; padding:24px; text-align:center; font-size:17px; color:var(--text-soft)}
+
+/* neve */
+#snow{position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none}
+#editor{position:relative; z-index:1}
+
+/* scrittura */
+#editor{max-width:592px; margin:0 auto; padding:calc(20px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom))}
+#editor h1{margin:6px 0 20px; font-size:24px; font-weight:700; letter-spacing:-.01em}
+.field{margin-bottom:16px}
+.field label{display:block; margin:0 0 6px 2px; font-size:14px; font-weight:600; color:var(--text-soft)}
+.line{width:100%; padding:9px 14px; border:1px solid var(--field-line); border-radius:12px; outline:none; background:var(--field); color:var(--text); font-family:'Over the Rainbow', 'La Belle Aurore', 'Snell Roundhand', cursive; font-size:22px}
+.line:focus{border-color:var(--text-soft)}
+textarea.sheet{min-height:calc(var(--lh) * 14.5); border:0; outline:none; resize:none; overflow:hidden; font-family:'Over the Rainbow', 'La Belle Aurore', 'Snell Roundhand', cursive; font-size:24px; line-height:var(--lh); box-shadow:0 8px 24px var(--shadow), 0 1px 2px rgba(0,0,0,.08)}
+textarea.sheet::placeholder{color:var(--ink-soft); opacity:.7}
+.actions{display:flex; gap:10px; margin-top:22px}
+.btn{flex:1; padding:15px 12px; border:0; border-radius:14px; font-weight:700; font-size:16px; cursor:pointer}
+.btn.primary{background:var(--pen-a); color:#fff}
+.btn.ghost{background:transparent; color:var(--text); box-shadow:inset 0 0 0 1.5px var(--field-line)}
+.btn:disabled, .small:disabled{opacity:.45; cursor:default}
+.small{display:block; margin:14px auto 0; padding:6px; background:none; border:0; color:var(--text-soft); font-weight:600; font-size:15px; text-decoration:underline; text-underline-offset:3px; cursor:pointer}
+.status{min-height:22px; margin:10px 0 0; text-align:center; font-size:15px; color:var(--text-soft)}
+#linkbox{width:100%; margin-top:8px; padding:10px; border:1px solid var(--field-line); border-radius:10px; background:var(--field); color:var(--text); font:13px ui-monospace, monospace; resize:none}
+</style>
+</head>
+<body>
+<canvas id="snow" aria-hidden="true"></canvas>
+
+<main id="editor" hidden>
+  <h1>Scrivi la lettera</h1>
+  <div class="field"><label for="to">Sulla busta</label><input id="to" class="line" maxlength="40" autocomplete="off"></div>
+  <div class="field"><label for="body">La lettera</label><textarea id="body" class="sheet" maxlength="6000" placeholder="Scrivi qui…"></textarea></div>
+  <div class="field"><label for="sign">Firma</label><input id="sign" class="line" maxlength="40" autocomplete="off"></div>
+  <div class="actions">
+    <button class="btn ghost" id="try">Provala</button>
+    <button class="btn primary" id="send">Manda a Ivi</button>
+  </div>
+  <button class="small" id="copy">Copia il link</button>
+  <p class="status" id="status" aria-live="polite"></p>
+  <textarea id="linkbox" rows="3" readonly hidden></textarea>
+</main>
+
+<button class="back" id="back" hidden>← Torna a scrivere</button>
+
+<section id="stage" hidden>
+  <div class="env-wrap"><div class="float">
+    <div class="env" id="env" role="button" tabindex="0" aria-label="Apri la lettera">
+      <div class="env-back"></div>
+      <div class="letter" id="letter"><div class="sheet hand" id="mini" aria-hidden="true"></div></div>
+      <div class="front"></div>
+      <div class="to hand" id="toLabel"></div>
+      <div class="flap-box"><div class="flap"></div></div>
+    </div>
+  </div></div>
+  <p class="hint">tocca la busta</p>
+</section>
+
+<section id="reader" hidden>
+  <div class="sheet-wrap"><article class="sheet hand" id="sheet"></article></div>
+  <button class="again" id="again">Richiudi</button>
+</section>
+
+<p class="broken" id="broken" hidden>Il link non si apre bene, fattelo rimandare</p>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const root = document.documentElement;
+  const stage = $('stage'), reader = $('reader'), editor = $('editor');
+  const sheet = $('sheet'), mini = $('mini'), letter = $('letter'), env = $('env');
+  const toIn = $('to'), bodyIn = $('body'), signIn = $('sign');
+  const KEY = 'lettera-bozza';
+  // la lettera va qui dentro, così il link resta corto (con #scrivi si apre il foglio per scriverne un'altra)
+  const LETTERA = 'zXVexjuS4Ef0VopNJeic4wMChE8M4O1hg1zjfGo42qZbYvQVIpJakFIzhf7nQBi5y5nh-zO9VUZqeS2a6WyJZ9eq9V8V_ntrpcvo5lvBxkySn8-mK7z-pZPyg56_pa9pyKVHDkNOom46xRH4OLYbva6xNwiJ3TRLGOIVZcxhViuZnLv3w4QP_fY5lyFMcX38LP_whpLzF-Voin_yiS0w1B5mwrA654PPwLXow2C18k3CT1nKYntap6Sxhy1OTc4h8Wuz8NYVxvV41X8INO8SgiaFNU0RoBQeH4SkWxKmv_wuThCJ42eOdtOld_Uw8GWJp8eUFzxRhJp4FZHBGz3mOz-Gv-L_kikCrLLFMmbH4y_cJW8VaCRE-CVdedVK8xAyxConUNT-HjynkewKoUrG-x_sGAcKeZOsRI5b6-h8LER_neEHkGoBFLoqj-cXStzeAV43zggBkWxuPnZ5QM8sIOE3xLjNgKfmGcmYuX4u0tSAKHAc8B01W4hFo5NlQrjllfllyaYI9e3G_yLKozDm0tTWLZI0Wg6aqEUtrs8fXmAAbKPb63zOCC_dVCo4WoBWspjghMrGqCGIYJHncEVACYI3pJWKTadJaFdtukasTT0JGMuVkwNSG6Guwz0us2MUqydcG5xH2YpypFZmvajn8lIkJHmPHMTdL74ZyjIZb0heUEYfMGWRBEQHQoBU803mJd6DScpMpMi3E2V5_RcgIYwY_v57ICSaG9YvUKg11yV9Pz-GzHKgiZELLjBkoIkMMZerYA6wbmMYiYAnpZXXBCak9SUrA6_E9MAKHcS0LQxxQzO8rkbB3XU4IdF60UadBADCT1i26oA65IVOs6mKvXlcC5UklrADRVq7q0pmxUYRqSXvwGJYAmv-NKsSRsYGrg0kOsHbsHKrMY41Z2FGMoAW_mCEgDlMJJBOqpnumjnDM_Q5iIQgUwoJDyqtaeLNgOaKMM56DejJi23OPEmRCmNh3w1qxWA0uaYJQ8i0aJT6mLQ7R0RnoNSwHNpAFOsZe4CXYcqAE2ElA7D18g0pvMtAA3kDbbWST5_CFJa-uoQQUq8IdwB7IcYFlhm5EswI0UqLhL_XsLyr49Rz-YjuOyvx1yAY9iq1LHopWlQv567p_NMyjoNt-BkLYFJlX4xQhXmR5_RU0oUJoYOdA8kBsIxwb1QFsWpyMNRdW9mzBYK9Y8gH6iOqK88uPAGw99w49Ht51HZVSj6bY2w0mhS8slQMs45gpml3qpolpkSMo2diVEBptrpsus6BzcFk038Zmm0IGIOOnaPy-QsB3C9OIhT-LvOxGaj9QqMpIUA_mN5k_AN0ulguCi2wAoCNpAZq4IS7268EOhIz0WQMezt9Hw8U0Qcall4NPY2zdAzqiG4ytKBzM-ctf2cM2IA0wX3-zriHTsIJ8VduKHDKkgpWv_0ass1RrmjKjA_LVa4azorhiW-Ed7uRNRQ5l77Y0i7rKsccRSMvm4pQQYIRRR_dLslStPxSYEfQQ7AWwjZVBf6ElTCvke-G55L-Y8EBidMRikSOMJ7nd3qHgyDAWmAfCQm9aGcQvkbnhl01345y64nA4FDgotU0bX6Ol_B32UKGPbUefHEaTbaZz8ooq7BJGjN_dt-pqxoIgdDKXxjAxIQsggIAhnXW2KsMFlpyq7CIlGcz6PDgmvQ6DkcNbPTrj0fNczxEOXDAMtVgqCHb4sM8eM5oMiwS2POER_J3GY8T4Jt5EZgvInQPJEF8khGrKgw09DCjP4e_WthGN0oDugJ770w-5M2cTNg1kfls5IFx24rxrBcBxejsJquZAxlGJwOk822hYJrUyqIkDIyB7V_BdfvjRWGXIb7AHZMt5wup7DJhHO_8jof303tm8bbmA3Cs6I9CG0AcHWpeNJZP5w6F_dU-39kmHphO-jXpwGYor9w7sHZwKtiHws7hQOICMiAbovC1lWgfR90HFOVeHaNPrspbglI70sm48NsaxqNVbF6e4YIMUueOjpzFlzwxc6V3tsm_n-dgK9ah7CBxp8kOUHL9kaoUHjgfpnbE2IM-7jz3Md8_hT-kFK_D6ncKNwc3DZhR3FahenGri8yoadrF2A3rkAV0lRZ5dGzpAd7aaKSuDPFevFqcBzgBhwlTFUT3RK2DDmDoxLbjj_qNfTXzGI318CkKpqRDvKGzJBPkhv4E20bHgeNrnKLaUec57U7nx8e-mwYtNuVbzfeBO4MFbvr5pH4HP9goK4dJLuZ-GU-HPYjl8Mr1UXqx8HhlzIls4lVOHyAGj791zwXDOG5P1Sh9KkNz5uCfYsJe9ImQAti5xFPNd8IT2aoOTXZFQwNFkYHl2ChYObsleUp-lR4y8-40AdUIv-5j3CxAHstGa7O6pJVuXVHYtDr5r8klgUwoZp-6h0h_QIvptkrb-Z1OwSR4k6e2Wt4Z9CBSLxeYtu0HtmrRe8bS33Yv5NQCtbF9mkd6mHzoL4ABFMNVntyy8VjGCYflhPea2Vr38ftJz27P2SPbbyGHD7pfYf8TWDyaDlT5HuyOhW76gYn08Qn5omovBC47b8YhFmLWRmGwm7tWwmuSyd0ZrZ36nMvgpfS56mGmYO6KgiWFiKtARvcL6ms0fcBi_BH3DMMYQDOddYATJughvFr2z2bXbR-ye1fUajxuV15bNJalZJMM3UUhBsGZnENI-99-90Ka8UX0rQ939irG688BEshPSboHvHAq8qiu3QW8hmGA-b-VNjt7Bq4ULLe4dsF9_uxTsfno6n26nywn_Rv771_8B';
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let current = null, preview = false, busy = false, run = 0, link = '', packing = 0;
+
+  // la lettera viaggia tutta dentro il link (dopo il #), compressa
+  function b64u(bytes) {
+    let s = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function unb64u(str) {
+    str = str.replace(/-/g, '+').replace(/_/g, '/');
+    while (str.length % 4) str += '=';
+    const s = atob(str), out = new Uint8Array(s.length);
+    for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
+    return out;
+  }
+  async function pipe(bytes, stream) {
+    return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+  }
+  async function pack(obj) {
+    const bytes = new TextEncoder().encode(JSON.stringify(obj));
+    if (typeof CompressionStream !== 'undefined') {
+      try { return 'z' + b64u(await pipe(bytes, new CompressionStream('deflate-raw'))); } catch (e) {}
+    }
+    return 'u' + b64u(bytes);
+  }
+  async function unpack(str) {
+    let bytes = unb64u(str.slice(1));
+    if (str[0] === 'z') bytes = await pipe(bytes, new DecompressionStream('deflate-raw'));
+    else if (str[0] !== 'u') throw new Error('formato');
+    const d = JSON.parse(new TextDecoder().decode(bytes));
+    if (!d || typeof d.b !== 'string') throw new Error('vuota');
+    return { t: String(d.t || ''), b: d.b, f: String(d.f || ''), d: String(d.d || '') };
+  }
+
+  function today() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function niceDate(s) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+    return m ? new Date(+m[1], m[2] - 1, +m[3]).toLocaleDateString('it-IT', { day: 'numeric', month: 'long' }) : '';
+  }
+
+  // ogni parola un filo storta e con l'inchiostro non uniforme, sempre uguale per la stessa lettera
+  function seeded(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+    return () => {
+      h = (h + 0x6D2B79F5) | 0;
+      let t = Math.imul(h ^ (h >>> 15), 1 | h);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function handwrite(p, txt) {
+    const r = seeded(txt);
+    let drift = 0;
+    for (const part of txt.split(/(\s+)/)) {
+      if (!part) continue;
+      if (/^\s+$/.test(part)) { p.append(part); if (part.includes('\n')) drift = 0; continue; }
+      drift = Math.max(-1.5, Math.min(1.5, drift + (r() - 0.5) * 0.8));
+      const w = document.createElement('span');
+      w.className = 'w';
+      w.textContent = part;
+      w.style.transform = `translateY(${drift.toFixed(2)}px) rotate(${((r() - 0.5) * 1.6).toFixed(2)}deg)`;
+      w.style.opacity = (0.82 + r() * 0.18).toFixed(2);
+      p.append(w);
+    }
+  }
+
+  function fill(el, d) {
+    el.replaceChildren();
+    const add = (cls, txt) => { const p = document.createElement('p'); p.className = cls; p.textContent = txt; el.append(p); return p; };
+    if (niceDate(d.d)) add('date', niceDate(d.d));
+    // una riga con solo --- separa il biglietto dalla pagina di diario: sotto, la prima riga è la data del diario
+    const parts = d.b.split(/\n[ \t]*-{3,}[ \t]*(?:\n|$)/);
+    if (parts.length === 2) {
+      handwrite(add('text', ''), parts[0].replace(/\s+$/, ''));
+      add('sep', '');
+      const rest = parts[1].replace(/^\s+/, '');
+      const nl = rest.indexOf('\n');
+      add('date diary', nl < 0 ? rest : rest.slice(0, nl).trim());
+      if (nl >= 0) handwrite(add('text', ''), rest.slice(nl).replace(/^\s+/, ''));
+    } else {
+      handwrite(add('text', ''), d.b);
+    }
+    if (d.f) add('sign', d.f);
+  }
+
+  // il foglietto nella busta è lo stesso foglio, rimpicciolito
+  function fitMini() {
+    const w = sheet.offsetWidth;
+    if (!w) return;
+    mini.style.width = w + 'px';
+    mini.style.transform = 'scale(' + (letter.clientWidth / w) + ')';
+  }
+
+  function showEnvelope() {
+    run++; busy = false;
+    editor.hidden = true;
+    $('back').hidden = !preview;
+    root.classList.toggle('preview', preview);
+    root.classList.add('lock');
+    root.classList.remove('reading');
+    window.scrollTo(0, 0);
+    $('toLabel').textContent = current.t;
+    fill(sheet, current); fill(mini, current);
+    sheet.removeAttribute('style');
+    letter.style.visibility = '';
+    reader.hidden = false;
+    reader.style.visibility = 'hidden';
+    stage.className = 'instant';
+    stage.hidden = false;
+    stage.offsetWidth;
+    stage.className = '';
+    const wrap = stage.querySelector('.env-wrap');
+    wrap.style.animation = 'none'; wrap.offsetWidth; wrap.style.animation = '';
+    stage.querySelector('.float').style.animationPlayState = '';
+    fitMini();
+  }
+
+  async function openIt() {
+    if (busy || stage.hidden || root.classList.contains('reading')) return;
+    busy = true;
+    const me = run, still = () => me === run;
+    const slow = !calm();
+    stage.querySelector('.float').style.animationPlayState = 'paused';
+    if (slow) {
+      stage.classList.add('opening'); await wait(230); if (!still()) return;
+      stage.classList.add('open'); await wait(720); if (!still()) return;
+      stage.classList.add('out'); await wait(880); if (!still()) return;
+    }
+    window.scrollTo(0, 0);
+    const sr = sheet.getBoundingClientRect(), lr = letter.getBoundingClientRect(), er = env.getBoundingClientRect();
+    reader.style.visibility = 'visible';
+    root.classList.add('reading');
+    if (slow) {
+      // il foglio grande parte esattamente da dove si vede il foglietto, sopra il bordo a V della busta
+      const W = sr.width, H = sr.height, k = lr.width / W;
+      const cx = er.left + er.width / 2;
+      const vy = x => er.top + 0.54 * er.height * (1 - Math.abs(x - cx) / (er.width / 2));
+      const ly = y => Math.max(0, (y - lr.top) / k);
+      const from = `polygon(0px 0px, ${W}px 0px, ${W}px ${ly(vy(lr.right))}px, ${(cx - lr.left) / k}px ${ly(vy(cx))}px, 0px ${ly(vy(lr.left))}px)`;
+      const to = `polygon(0px 0px, ${W}px 0px, ${W}px ${H}px, ${W / 2}px ${H}px, 0px ${H}px)`;
+      sheet.style.transition = 'none';
+      sheet.style.transformOrigin = '0 0';
+      sheet.style.transform = `translate(${lr.left - sr.left}px, ${lr.top - sr.top}px) scale(${k})`;
+      sheet.style.clipPath = sheet.style.webkitClipPath = from;
+      letter.style.visibility = 'hidden';
+      sheet.offsetWidth;
+      const ease = '.9s cubic-bezier(.2,.75,.2,1)';
+      sheet.style.transition = `transform ${ease}, clip-path ${ease}, -webkit-clip-path ${ease}`;
+      sheet.style.transform = 'translate(0px, 0px) scale(1)';
+      sheet.style.clipPath = sheet.style.webkitClipPath = to;
+      stage.classList.add('away');
+      await wait(950); if (!still()) return;
+    }
+    stage.hidden = true;
+    sheet.removeAttribute('style');
+    root.classList.remove('lock');
+    busy = false;
+  }
+
+  stage.addEventListener('click', openIt);
+  env.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openIt(); } });
+  $('again').addEventListener('click', showEnvelope);
+  addEventListener('resize', () => { if (!stage.hidden && !busy) fitMini(); if (!editor.hidden) grow(); });
+  addEventListener('hashchange', () => location.reload());
+
+  // scrittura
+  function draft() {
+    return { t: toIn.value.trim(), b: bodyIn.value.replace(/\s+$/, ''), f: signIn.value.trim(), d: today() };
+  }
+  function grow() { bodyIn.style.height = 'auto'; bodyIn.style.height = bodyIn.scrollHeight + 'px'; }
+  async function makeLink() {
+    const n = ++packing;
+    const url = location.origin + location.pathname + '#l=' + await pack(draft());
+    if (n === packing) link = url;
+    return url;
+  }
+  function onEdit() {
+    grow();
+    try { localStorage.setItem(KEY, JSON.stringify({ t: toIn.value, b: bodyIn.value, f: signIn.value })); } catch (e) {}
+    const empty = !bodyIn.value.trim();
+    $('send').disabled = $('try').disabled = $('copy').disabled = empty;
+    $('status').textContent = '';
+    $('linkbox').hidden = true;
+    link = '';
+    if (!empty) makeLink();
+  }
+  async function copy(url) {
+    try {
+      await navigator.clipboard.writeText(url);
+      $('status').textContent = 'Link copiato, ora incollalo nella chat con Ivi';
+      $('linkbox').hidden = true;
+    } catch (e) {
+      const box = $('linkbox');
+      box.value = url; box.hidden = false; box.focus(); box.select();
+      $('status').textContent = 'Copia questo link e mandalo a Ivi';
+    }
+  }
+  $('send').addEventListener('click', async () => {
+    const url = link || await makeLink();
+    if (navigator.share) {
+      try { await navigator.share({ url }); return; }
+      catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    copy(url);
+  });
+  $('copy').addEventListener('click', async () => copy(link || await makeLink()));
+  $('try').addEventListener('click', () => { current = draft(); preview = true; showEnvelope(); });
+  $('back').addEventListener('click', () => {
+    run++; busy = false;
+    stage.hidden = true; reader.hidden = true; $('back').hidden = true;
+    root.classList.remove('lock', 'reading', 'preview');
+    editor.hidden = false;
+    grow();
+  });
+
+  async function init() {
+    const packed = location.hash.startsWith('#l=') ? location.hash.slice(3) : location.hash === '#scrivi' ? '' : LETTERA;
+    if (packed) {
+      try { current = await unpack(packed); }
+      catch (e) { root.classList.remove('lock'); $('broken').hidden = false; return; }
+      preview = false;
+      // aspetta il font scritto a mano, così la busta non cambia faccia mentre si apre
+      try { await Promise.race([Promise.all([document.fonts.load("24px 'La Belle Aurore'"), document.fonts.load("24px 'Over the Rainbow'", 'I')]), wait(1500)]); } catch (e) {}
+      showEnvelope();
+      return;
+    }
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+    toIn.value = saved.t ?? 'Per Ivi';
+    bodyIn.value = saved.b ?? '';
+    signIn.value = saved.f ?? 'Gabri';
+    root.classList.remove('lock');
+    editor.hidden = false;
+    [toIn, bodyIn, signIn].forEach(el => el.addEventListener('input', onEdit));
+    onEdit();
+  }
+  init();
+})();
+</script>
+
+<script>
+(() => {
+  const c = document.getElementById('snow');
+  if (!c || !c.getContext) return;
+  const ctx = c.getContext('2d');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const col = 'rgb(' + (getComputedStyle(document.documentElement).getPropertyValue('--snow').trim() || '255,255,255') + ')';
+  let w = 0, h = 0, flakes = [];
+  const flake = (top) => ({ x: Math.random() * w, y: top ? -6 : Math.random() * h, r: .8 + Math.random() * 2, v: .25 + Math.random() * .55, p: Math.random() * 6.3, a: .35 + Math.random() * .5 });
+  function size() {
+    const d = Math.min(devicePixelRatio || 1, 2);
+    w = innerWidth; h = innerHeight;
+    c.width = Math.round(w * d); c.height = Math.round(h * d);
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    const n = Math.round(Math.min(80, w * h / 8000));
+    while (flakes.length < n) flakes.push(flake(false));
+    flakes.length = n;
+  }
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = col;
+    for (const f of flakes) {
+      ctx.globalAlpha = f.a;
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 6.3); ctx.fill();
+    }
+  }
+  let last = 0;
+  function tick(t) {
+    const k = last ? Math.min((t - last) / 16.7, 3) : 1; last = t;
+    for (const f of flakes) {
+      f.y += f.v * k;
+      f.x += Math.sin(t / 1800 + f.p) * .25 * k;
+      if (f.y > h + 6) Object.assign(f, flake(true));
+    }
+    draw();
+    requestAnimationFrame(tick);
+  }
+  size();
+  addEventListener('resize', () => { size(); if (still) draw(); });
+  if (still) draw(); else requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
